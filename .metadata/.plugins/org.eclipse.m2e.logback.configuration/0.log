@@ -1,0 +1,24 @@
+2015-06-13 22:36:32,964 [Worker-0] ERROR org.eclipse.jgit.util.FS - Caught exception in FS.readPipe()
+java.io.IOException: Cannot run program "bash" (in directory "C:\Users\anuragjain"): CreateProcess error=2, The system cannot find the file specified
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1048) ~[na:1.8.0_25]
+	at java.lang.Runtime.exec(Runtime.java:620) ~[na:1.8.0_25]
+	at org.eclipse.jgit.util.FS.readPipe(FS.java:431) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.jgit.util.FS_Win32.discoverGitPrefix(FS_Win32.java:113) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.jgit.util.FS.gitPrefix(FS.java:517) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.jgit.util.SystemReader$Default.openSystemConfig(SystemReader.java:92) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.jgit.internal.storage.file.FileRepository.<init>(FileRepository.java:171) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.jgit.storage.file.FileRepositoryBuilder.build(FileRepositoryBuilder.java:92) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.jgit.storage.file.FileRepositoryBuilder.create(FileRepositoryBuilder.java:110) [org.eclipse.jgit_3.7.0.201502260915-r.jar:3.7.0.201502260915-r]
+	at org.eclipse.egit.core.RepositoryCache.lookupRepository(RepositoryCache.java:55) [org.eclipse.egit.core_3.7.0.201502260915-r.jar:na]
+	at org.eclipse.egit.core.project.GitProjectData.map(GitProjectData.java:503) [org.eclipse.egit.core_3.7.0.201502260915-r.jar:na]
+	at org.eclipse.egit.core.project.GitProjectData.remapAll(GitProjectData.java:471) [org.eclipse.egit.core_3.7.0.201502260915-r.jar:na]
+	at org.eclipse.egit.core.project.GitProjectData.setRepositoryMappings(GitProjectData.java:315) [org.eclipse.egit.core_3.7.0.201502260915-r.jar:na]
+	at org.eclipse.egit.core.op.ConnectProviderOperation.execute(ConnectProviderOperation.java:125) [org.eclipse.egit.core_3.7.0.201502260915-r.jar:na]
+	at org.eclipse.egit.core.internal.job.JobUtil$1.run(JobUtil.java:53) [org.eclipse.egit.core_3.7.0.201502260915-r.jar:na]
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:54) [org.eclipse.core.jobs_3.6.1.v20141014-1248.jar:na]
+Caused by: java.io.IOException: CreateProcess error=2, The system cannot find the file specified
+	at java.lang.ProcessImpl.create(Native Method) ~[na:1.8.0_25]
+	at java.lang.ProcessImpl.<init>(ProcessImpl.java:386) ~[na:1.8.0_25]
+	at java.lang.ProcessImpl.start(ProcessImpl.java:137) ~[na:1.8.0_25]
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1029) ~[na:1.8.0_25]
+	... 15 common frames omitted
