@@ -1,5 +1,6 @@
 package bigdata.datascraper.flipkart;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class TestFlipkart {
         // in a csv file
         WebElement query = driver.findElement(By.id("fk-top-search-box"));
         //Send search query to the top search bar.
-        query.sendKeys("nokia lumia");
+        query.sendKeys("samsung galaxy");
         
         //Submit the search form now.
         driver.findElement(By.id("fk-header-search-form")).submit();
@@ -68,10 +69,25 @@ public class TestFlipkart {
 	        	WebDriver driver_prod = new FirefoxDriver();
 	        	driver_prod.get(aHref);
 	        	
-	        	//Fetch Title
-	        	WebElement productTitle = driver_prod.findElement(By.className("title-wrap"));
+	        	//Fetch Product Details
+	        	WebElement productTitle = driver_prod.findElement(By.xpath("//h1[@class='title']"));
+	        	WebElement productSubTitle = driver_prod.findElement(By.className("subtitle"));
+	        	WebElement productPrice = driver_prod.findElement(By.className("selling-price"));
+	        	WebElement sellerName = driver_prod.findElement(By.className("seller-name"));
+	        	WebElement sellerRating = driver_prod.findElement(By.className("rating-out-of-five"));
+	        	
+	        	List<WebElement> productFeatures = driver_prod.findElements(By.xpath("//ul[@class='keyFeaturesList']/li")); 
+	        	ArrayList<String> productFeaturesArrayList = new ArrayList<String>();
+	        	for (WebElement feature: productFeatures) {
+	        		productFeaturesArrayList.add(feature.getText());
+	        	}
 	        	//Add the title as a k-v pair in our JSON document
-	        	documentMap.put("product_name", productTitle.getText());
+	        	documentMap.put("product_title", productTitle.getText());
+	        	documentMap.put("product_subTitle", productSubTitle.getText());
+	        	documentMap.put("product_price", productPrice.getText());
+	        	documentMap.put("primary_seller_name", sellerName.getText());
+	        	documentMap.put("primary_seller_rating", sellerRating.getText());
+	        	documentMap.put("product_main_features", productFeaturesArrayList.toArray());
 	        	
 	        	//Might not be needed, has to be cleaned up eventually.
 	        	//WebElement productPrice = driver.findElement(By.className("selling-price "));
