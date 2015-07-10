@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,13 +31,14 @@ public class TestFlipkart {
         
         // Load up the Flipkart's home page.
         driver.get("http://www.flipkart.com");
+        driver.manage().window().maximize();
         
         // Enter the query string "whatever", 
         // this will soon be replaced with strings added 
         // in a csv file
         WebElement query = driver.findElement(By.id("fk-top-search-box"));
         //Send search query to the top search bar.
-        query.sendKeys("samsung galaxy");
+        query.sendKeys("nagas");
         
         //Submit the search form now.
         driver.findElement(By.id("fk-header-search-form")).submit();
@@ -44,6 +46,36 @@ public class TestFlipkart {
         //Temporary Link -
         //driver.get("http://www.flipkart.com/sports-fitness/fitness-accessories/accessories/yoga-straps/pr?sid=dep%2Cxnh%2Ccsz%2Cznc&filterNone=true&q=yoga+mat");
         
+        //Completely get the page in case of lazy loading
+    	JavascriptExecutor js = (JavascriptExecutor)driver;
+        
+    	while(1==1) {
+    		try {
+    		    Thread.sleep(500);
+    		} catch(InterruptedException ex) {
+    		    Thread.currentThread().interrupt();
+    		}
+    		
+    		if(driver.findElement(By
+					.xpath("//div[@id='show-more-results']"))
+					.isDisplayed()) {
+    			driver.findElement(By
+    					.xpath("//div[@id='show-more-results']")).click();
+    		}
+					
+			if (driver.findElement(By.xpath("//div[@id='no-more-results']"))
+					.isDisplayed())
+				break;
+			else
+				js.executeScript("window.scrollBy(0,250)", "");
+    	}
+    	
+    	//Finally scroll till top
+    	WebElement gotoTop = driver.findElement(By
+				.className("fk-ui-goTop"));
+		if (gotoTop != null)
+			gotoTop.click();
+    	
         int pullThePlug = 0;
         //On the resulting page, load up all the elements with class as pu-title
         List<WebElement> lstProducts = driver.findElements(By.className("pu-title"));
@@ -69,25 +101,72 @@ public class TestFlipkart {
 	        	WebDriver driver_prod = new FirefoxDriver();
 	        	driver_prod.get(aHref);
 	        	
+	        	WebElement productTitle = null;
+	        	WebElement productSubTitle = null;
+	        	WebElement productPrice = null;
+	        	WebElement sellerName = null;
+	        	WebElement sellerRating = null;
+	        	
 	        	//Fetch Product Details
-	        	WebElement productTitle = driver_prod.findElement(By.xpath("//h1[@class='title']"));
-	        	WebElement productSubTitle = driver_prod.findElement(By.className("subtitle"));
-	        	WebElement productPrice = driver_prod.findElement(By.className("selling-price"));
-	        	WebElement sellerName = driver_prod.findElement(By.className("seller-name"));
-	        	WebElement sellerRating = driver_prod.findElement(By.className("rating-out-of-five"));
+	        	try {
+	        		productTitle = driver_prod.findElement(By.xpath("//h1[@class='title']"));
+		        	productSubTitle = driver_prod.findElement(By.className("subtitle"));
+		        	productPrice = driver_prod.findElement(By.className("selling-price"));
+		        	sellerName = driver_prod.findElement(By.className("seller-name"));
+		        	sellerRating = driver_prod.findElement(By.className("rating-out-of-five"));
+	        	} catch(NoSuchElementException ex) {
+	    			System.out.println(ex.toString());
+	    		} catch (ElementNotVisibleException ex) {
+					System.out.println(ex.toString());
+				}	        	
 	        	
 	        	List<WebElement> productFeatures = driver_prod.findElements(By.xpath("//ul[@class='keyFeaturesList']/li")); 
 	        	ArrayList<String> productFeaturesArrayList = new ArrayList<String>();
-	        	for (WebElement feature: productFeatures) {
-	        		productFeaturesArrayList.add(feature.getText());
+	        	
+	        	try {
+	        		for (WebElement feature: productFeatures) {
+		        		productFeaturesArrayList.add(feature.getText());
+		        	}
+	        	} catch(NullPointerException ex) {
+	        		System.out.println(ex);
 	        	}
+	        	
 	        	//Add the title as a k-v pair in our JSON document
-	        	documentMap.put("product_title", productTitle.getText());
-	        	documentMap.put("product_subTitle", productSubTitle.getText());
-	        	documentMap.put("product_price", productPrice.getText());
-	        	documentMap.put("primary_seller_name", sellerName.getText());
-	        	documentMap.put("primary_seller_rating", sellerRating.getText());
-	        	documentMap.put("product_main_features", productFeaturesArrayList.toArray());
+	        	try{
+	        		documentMap.put("product_title", productTitle.getText());
+	        	} catch(NullPointerException ex) {
+	        		documentMap.put("product_title", "");
+	        	}
+	        	
+	        	try {
+	        		documentMap.put("product_subTitle", productSubTitle.getText());
+	        	} catch(NullPointerException ex) {
+	        		documentMap.put("product_subTitle", "");
+	        	}
+	        	
+	        	try {
+	        		documentMap.put("product_price", productPrice.getText());
+	        	} catch(NullPointerException ex) {
+	        		documentMap.put("product_price", "");
+	        	}
+	        	
+	        	try {
+	        		documentMap.put("primary_seller_name", sellerName.getText());
+	        	} catch(NullPointerException ex) {
+	        		documentMap.put("primary_seller_name", "");
+	        	}
+	        	
+	        	try {
+	        		documentMap.put("primary_seller_rating", sellerRating.getText());
+	        	} catch(NullPointerException ex) {
+	        		documentMap.put("primary_seller_rating", "");
+	        	}
+	        	
+	        	try { 
+	        		documentMap.put("product_main_features", productFeaturesArrayList.toArray());
+	        	} catch(NullPointerException ex) {
+	        		documentMap.put("product_main_features", "");
+	        	}
 	        	
 	        	//Might not be needed, has to be cleaned up eventually.
 	        	//WebElement productPrice = driver.findElement(By.className("selling-price "));
@@ -149,7 +228,7 @@ public class TestFlipkart {
 	            collection.insert(new BasicDBObject(documentMap));
 	        	driver_prod.quit();
 	        	
-	        	pullThePlug = -1;
+	        	pullThePlug = 0;
         	}
  		}
         driver.quit();
